@@ -1,0 +1,561 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "Siru HealthHub — FHIR API",
+    "description": "Complete FHIR R4 Patient API test suite for Siru HealthHub. Covers Health, Metadata, Patient CRUD, Search, and Negative tests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "variable": [
+    {"key": "base_url", "value": "http://localhost:8000"},
+    {"key": "patient_id", "value": "P1001"}
+  ],
+  "item": [
+    {
+      "name": "Health & Metadata",
+      "item": [
+        {
+          "name": "GET Health Check",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Accept", "value": "application/fhir+json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            },
+            "description": "Verify the API is up and returning status=ok"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Body has status ok', () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.status).to.eql('ok');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "GET FHIR Metadata",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Accept", "value": "application/fhir+json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/fhir/metadata",
+              "host": ["{{base_url}}"],
+              "path": ["fhir", "metadata"]
+            },
+            "description": "Retrieve the FHIR CapabilityStatement describing server capabilities"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('resourceType is CapabilityStatement', () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.resourceType).to.eql('CapabilityStatement');",
+                  "});",
+                  "pm.test('fhirVersion is 4.0.1', () => {",
+                  "  pm.expect(pm.response.json().fhirVersion).to.eql('4.0.1');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Patient CRUD",
+      "item": [
+        {
+          "name": "POST Create Patient",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Accept", "value": "application/fhir+json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resourceType\": \"Patient\",\n  \"name\": [\n    {\n      \"use\": \"official\",\n      \"family\": \"Kumar\",\n      \"given\": [\"Siru\"]\n    }\n  ],\n  \"gender\": \"male\",\n  \"birthDate\": \"1990-01-15\",\n  \"telecom\": [\n    {\n      \"system\": \"phone\",\n      \"value\": \"+91-9000000001\",\n      \"use\": \"mobile\"\n    }\n  ],\n  \"address\": [\n    {\n      \"use\": \"home\",\n      \"line\": [\"123 Health Street\"],\n      \"city\": \"Chennai\",\n      \"state\": \"Tamil Nadu\",\n      \"postalCode\": \"600001\",\n      \"country\": \"IN\"\n    }\n  ]\n}",
+              "options": {"raw": {"language": "json"}}
+            },
+            "url": {
+              "raw": "{{base_url}}/fhir/Patient",
+              "host": ["{{base_url}}"],
+              "path": ["fhir", "Patient"]
+            },
+            "description": "Create a new FHIR Patient resource"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201', () => pm.response.to.have.status(201));",
+                  "pm.test('resourceType is Patient', () => {",
+                  "  pm.expect(pm.response.json().resourceType).to.eql('Patient');",
+                  "});",
+                  "pm.test('id is present', () => {",
+                  "  pm.expect(pm.response.json().id).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('meta.lastUpdated is set', () => {",
+                  "  pm.expect(pm.response.json().meta.lastUpdated).to.be.a('string');",
+                  "});",
+                  "pm.test('Location header present', () => {",
+                  "  pm.expect(pm.response.headers.get('Location')).to.be.a('string');",
+                  "});",
+                  "// Save patient id for subsequent requests",
+                  "const id = pm.response.json().id;",
+                  "if (id) { pm.environment.set('patient_id', id); }"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "GET All Patients",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Accept", "value": "application/fhir+json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/fhir/Patient",
+              "host": ["{{base_url}}"],
+              "path": ["fhir", "Patient"]
+            },
+            "description": "Retrieve all patients as a FHIR Bundle"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('resourceType is Bundle', () => {",
+                  "  pm.expect(pm.response.json().resourceType).to.eql('Bundle');",
+                  "});",
+                  "pm.test('Bundle has total field', () => {",
+                  "  pm.expect(pm.response.json()).to.have.property('total');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "GET Patient by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Accept", "value": "application/fhir+json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/fhir/Patient/{{patient_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["fhir", "Patient", "{{patient_id}}"]
+            },
+            "description": "Retrieve a specific patient by their FHIR ID"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('resourceType is Patient', () => {",
+                  "  pm.expect(pm.response.json().resourceType).to.eql('Patient');",
+                  "});",
+                  "pm.test('ID matches', () => {",
+                  "  pm.expect(pm.response.json().id).to.eql(pm.environment.get('patient_id'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "PUT Update Patient",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Accept", "value": "application/fhir+json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resourceType\": \"Patient\",\n  \"id\": \"{{patient_id}}\",\n  \"name\": [\n    {\n      \"use\": \"official\",\n      \"family\": \"KumarUpdated\",\n      \"given\": [\"Siru\"]\n    }\n  ],\n  \"gender\": \"male\",\n  \"birthDate\": \"1990-06-15\"\n}",
+              "options": {"raw": {"language": "json"}}
+            },
+            "url": {
+              "raw": "{{base_url}}/fhir/Patient/{{patient_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["fhir", "Patient", "{{patient_id}}"]
+            },
+            "description": "Full-resource update of an existing Patient"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('birthDate updated', () => {",
+                  "  pm.expect(pm.response.json().birthDate).to.eql('1990-06-15');",
+                  "});",
+                  "pm.test('family name updated', () => {",
+                  "  pm.expect(pm.response.json().name[0].family).to.eql('KumarUpdated');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "DELETE Patient",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Accept", "value": "application/fhir+json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/fhir/Patient/{{patient_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["fhir", "Patient", "{{patient_id}}"]
+            },
+            "description": "Delete a patient by ID. Expect 204 No Content."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 204', () => pm.response.to.have.status(204));",
+                  "pm.test('No response body', () => {",
+                  "  pm.expect(pm.response.text()).to.eql('');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "FHIR Search",
+      "item": [
+        {
+          "name": "GET Search by Name",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Accept", "value": "application/fhir+json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/fhir/Patient?name=Kumar",
+              "host": ["{{base_url}}"],
+              "path": ["fhir", "Patient"],
+              "query": [{"key": "name", "value": "Kumar"}]
+            },
+            "description": "Search patients by name parameter"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns Bundle', () => {",
+                  "  pm.expect(pm.response.json().resourceType).to.eql('Bundle');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "GET Search by Gender",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Accept", "value": "application/fhir+json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/fhir/Patient?gender=male",
+              "host": ["{{base_url}}"],
+              "path": ["fhir", "Patient"],
+              "query": [{"key": "gender", "value": "male"}]
+            },
+            "description": "Search patients filtered by gender=male"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns Bundle', () => {",
+                  "  pm.expect(pm.response.json().resourceType).to.eql('Bundle');",
+                  "});",
+                  "pm.test('All entries are male', () => {",
+                  "  const entries = pm.response.json().entry || [];",
+                  "  entries.forEach(e => {",
+                  "    pm.expect(e.resource.gender).to.eql('male');",
+                  "  });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "GET Search by Birthdate",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Accept", "value": "application/fhir+json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/fhir/Patient?birthdate=1995-05-10",
+              "host": ["{{base_url}}"],
+              "path": ["fhir", "Patient"],
+              "query": [{"key": "birthdate", "value": "1995-05-10"}]
+            },
+            "description": "Search patients by exact birthdate"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns Bundle', () => {",
+                  "  pm.expect(pm.response.json().resourceType).to.eql('Bundle');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "GET Search with Pagination",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Accept", "value": "application/fhir+json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/fhir/Patient?_count=5&_offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["fhir", "Patient"],
+              "query": [
+                {"key": "_count", "value": "5"},
+                {"key": "_offset", "value": "0"}
+              ]
+            },
+            "description": "Paginated patient search — first page, 5 results"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns Bundle', () => {",
+                  "  pm.expect(pm.response.json().resourceType).to.eql('Bundle');",
+                  "});",
+                  "pm.test('Entry count <= 5', () => {",
+                  "  const entries = pm.response.json().entry || [];",
+                  "  pm.expect(entries.length).to.be.at.most(5);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Negative Tests",
+      "item": [
+        {
+          "name": "POST Invalid JSON",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Accept", "value": "application/fhir+json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "this is not valid json at all }{[",
+              "options": {"raw": {"language": "text"}}
+            },
+            "url": {
+              "raw": "{{base_url}}/fhir/Patient",
+              "host": ["{{base_url}}"],
+              "path": ["fhir", "Patient"]
+            },
+            "description": "Submit malformed (non-JSON) body — expect 400 or 422"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400 or 422', () => {",
+                  "  pm.expect([400, 422]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "POST Wrong Resource Type",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Accept", "value": "application/fhir+json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resourceType\": \"Elephant\",\n  \"name\": [{\"family\": \"Dumbo\"}]\n}",
+              "options": {"raw": {"language": "json"}}
+            },
+            "url": {
+              "raw": "{{base_url}}/fhir/Patient",
+              "host": ["{{base_url}}"],
+              "path": ["fhir", "Patient"]
+            },
+            "description": "Submit wrong resourceType — expect 422 Unprocessable Entity"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 422', () => pm.response.to.have.status(422));"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "POST Invalid Gender",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Accept", "value": "application/fhir+json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resourceType\": \"Patient\",\n  \"name\": [{\"family\": \"Test\"}],\n  \"gender\": \"purple\"\n}",
+              "options": {"raw": {"language": "json"}}
+            },
+            "url": {
+              "raw": "{{base_url}}/fhir/Patient",
+              "host": ["{{base_url}}"],
+              "path": ["fhir", "Patient"]
+            },
+            "description": "Submit invalid gender value — expect 422 Unprocessable Entity"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 422', () => pm.response.to.have.status(422));"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "GET Nonexistent Patient",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Accept", "value": "application/fhir+json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/fhir/Patient/DOES-NOT-EXIST",
+              "host": ["{{base_url}}"],
+              "path": ["fhir", "Patient", "DOES-NOT-EXIST"]
+            },
+            "description": "Fetch a patient ID that does not exist — expect 404 with OperationOutcome"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 404', () => pm.response.to.have.status(404));",
+                  "pm.test('OperationOutcome returned', () => {",
+                  "  pm.expect(pm.response.json().resourceType).to.eql('OperationOutcome');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+# =============================================================
+# Siru HealthHub — .gitignore
+# =============================================================
+
+# ── Python ────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyw
+*.pyz
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+.venv/
+venv/
+env/
+.env
+.env.*
+!.env.example
+!.env.production.example
+
+# ── Backups ───────────────────────────────────────────────────
+backups/
+*.sql.gz
+
+# ── Node.js / Next.js ─────────────────────────────────────────
+node_modules/
+.next/
+out/
+.nuxt/
+.cache/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+*.tsbuildinfo
+
+# ── Docker ────────────────────────────────────────────────────
+# Keep docker-compose.yml, ignore local overrides
+docker-compose.override.yml
+
+# ── Databases ─────────────────────────────────────────────────
+*.sqlite
+*.sqlite3
+*.db
+
+# ── TLS Certificates (keep placeholder, ignore actual certs) ──
+docker/nginx/certs/*.crt
+docker/nginx/certs/*.key
+docker/nginx/certs/*.pfx
+docker/nginx/certs/*.pem
+!docker/nginx/certs/.gitkeep
+
+# ── Operating System ──────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ── IDEs & Editors ────────────────────────────────────────────
+.idea/
+.vscode/settings.json
+.vscode/launch.json
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# ── QA / Test Artifacts ───────────────────────────────────────
+qa/allure-results/
+qa/allure-report/
+qa/performance-tests/results/
+qa/.pytest_cache/
+qa/**/__pycache__/
+qa/**/*.pyc
+.coverage
+htmlcov/
+coverage.xml
+*.cover
+
+# ── Miscellaneous ─────────────────────────────────────────────
+*.bak
+*.tmp
+*.orig
+secrets/

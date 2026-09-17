@@ -1,0 +1,68 @@
+name: QA API Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: fhir_db
+          POSTGRES_USER: fhir_user
+          POSTGRES_PASSWORD: fhir_pass
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install backend dependencies
+        run: pip install -r backend/requirements.txt
+
+      - name: Start backend server
+        run: |
+          cd backend
+          uvicorn app.main:app --host 0.0.0.0 --port 8000 &
+          sleep 5
+        env:
+          DATABASE_URL: postgresql+asyncpg://fhir_user:fhir_pass@localhost:5432/fhir_db
+          REDIS_URL: redis://localhost:6379/0
+          SECRET_KEY: test-secret-key
+
+      - name: Install QA dependencies
+        run: pip install -r qa/requirements.txt
+
+      - name: Run QA test suites
+        run: pytest qa/ -v --tb=short
+        env:
+          BASE_URL: http://localhost:8000
+
