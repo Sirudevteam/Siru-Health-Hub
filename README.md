@@ -13,6 +13,8 @@
 ╚═══════════════════════════════════════════════════════════════╝
 ```
 
+[![Backend CI](https://github.com/Sirudevteam/Siru-Health-Hub/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/Sirudevteam/Siru-Health-Hub/actions/workflows/backend-ci.yml)
+[![QA API Tests](https://github.com/Sirudevteam/Siru-Health-Hub/actions/workflows/qa-ci.yml/badge.svg)](https://github.com/Sirudevteam/Siru-Health-Hub/actions/workflows/qa-ci.yml)
 ![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=flat-square&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=flat-square&logo=fastapi&logoColor=white)
 ![Next.js](https://img.shields.io/badge/Next.js-15-000000?style=flat-square&logo=nextdotjs&logoColor=white)
