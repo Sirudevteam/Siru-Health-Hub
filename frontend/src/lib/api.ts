@@ -10,6 +10,16 @@ export function getApiBase(): string {
 
 let _cachedToken: string | null = null;
 export async function getAuthHeader(): Promise<Record<string, string>> {
+  // Check client-side active session token first
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem('siru_access_token');
+      if (stored) return { Authorization: `Bearer ${stored}` };
+    } catch {
+      // localStorage may fail in private mode
+    }
+  }
+
   if (_cachedToken) return { Authorization: `Bearer ${_cachedToken}` };
   const base = getApiBase();
   try {
