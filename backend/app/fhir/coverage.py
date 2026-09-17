@@ -201,7 +201,7 @@ async def check_coverage_eligibility(
         "subscriberId": subscriber_id,
         "copayPercent": 10 if eligible else 0,
         "coinsuranceBenefit": 90 if eligible else 0,
-        "remainingDeductible": {"value": 5000.0, "currency": "INR"} if eligible else {"value": 0.0, "currency": "INR"},
+        "remainingDeductible": {"value": 500.0, "currency": "USD"} if eligible else {"value": 0.0, "currency": "USD"},
         "inNetwork": True,
         "disposition": disposition,
         "verifiedAt": datetime.utcnow().isoformat() + "Z"

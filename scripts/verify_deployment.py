@@ -136,7 +136,7 @@ def main():
         if r.status_code == 200:
             data = r.json()
             rcm = data.get("rcm", {})
-            return True, f"RCM Total Billed: INR {rcm.get('totalBilledAmount', 0):,.2f} | Clean Claim Rate: {rcm.get('cleanClaimRatePercent')}%"
+            return True, f"RCM Total Billed: ${rcm.get('totalBilledAmount', 0):,.2f} USD | Clean Claim Rate: {rcm.get('cleanClaimRatePercent')}%"
         return False, f"HTTP {r.status_code}"
     results.append(run_check("Executive Analytics API (/analytics/summary)", check_analytics))
 

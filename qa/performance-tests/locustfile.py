@@ -108,10 +108,10 @@ class BillingPersona(HttpUser):
                 {
                     "sequence": 1,
                     "productOrService": {"coding": [{"code": "99213"}]},
-                    "unitPrice": {"value": amt, "currency": "INR"},
+                    "unitPrice": {"value": amt, "currency": "USD"},
                     "quantity": {"value": 1}
                 }
             ],
-            "total": {"value": amt, "currency": "INR"}
+            "total": {"value": amt, "currency": "USD"}
         }, headers=self.headers, name="/fhir/Claim [POST Adjudicate]")
 

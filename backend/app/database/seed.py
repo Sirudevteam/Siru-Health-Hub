@@ -420,7 +420,7 @@ async def seed_database():
                     "period": {"start": "2026-01-01", "end": "2026-12-31"},
                     "payor": [{"reference": "Organization/ORG_PAYER_1", "display": "Star Health & Allied Insurance"}],
                     "class": [{"type": {"coding": [{"code": "plan"}]}, "value": "GOLD-COMP-01", "name": "Star Comprehensive Gold"}],
-                    "costToBeneficiary": [{"type": {"coding": [{"code": "copay"}]}, "valueMoney": {"value": 500.0, "currency": "INR"}}]
+                    "costToBeneficiary": [{"type": {"coding": [{"code": "copay"}]}, "valueMoney": {"value": 500.0, "currency": "USD"}}]
                 }
             },
             {
@@ -504,17 +504,17 @@ async def seed_database():
                         {
                             "sequence": 1,
                             "productOrService": {"coding": [{"system": "http://www.ama-assn.org/go/cpt", "code": "99214", "display": "Office Visit - Level 4"}]},
-                            "unitPrice": {"value": 2500.0, "currency": "INR"},
-                            "net": {"value": 2500.0, "currency": "INR"}
+                            "unitPrice": {"value": 2500.0, "currency": "USD"},
+                            "net": {"value": 2500.0, "currency": "USD"}
                         },
                         {
                             "sequence": 2,
                             "productOrService": {"coding": [{"system": "http://www.ama-assn.org/go/cpt", "code": "93000", "display": "Electrocardiogram, Routine ECG"}]},
-                            "unitPrice": {"value": 1200.0, "currency": "INR"},
-                            "net": {"value": 1200.0, "currency": "INR"}
+                            "unitPrice": {"value": 1200.0, "currency": "USD"},
+                            "net": {"value": 1200.0, "currency": "USD"}
                         }
                     ],
-                    "total": {"value": 3700.0, "currency": "INR"}
+                    "total": {"value": 3700.0, "currency": "USD"}
                 }
             ))
 
@@ -545,9 +545,9 @@ async def seed_database():
                     "outcome": "complete",
                     "disposition": "Claim fully adjudicated and approved. Insurer paid 90% benefit.",
                     "total": [
-                        {"category": {"coding": [{"code": "submitted"}]}, "amount": {"value": 3700.0, "currency": "INR"}},
-                        {"category": {"coding": [{"code": "benefit"}]}, "amount": {"value": 3330.0, "currency": "INR"}},
-                        {"category": {"coding": [{"code": "copay"}]}, "amount": {"value": 370.0, "currency": "INR"}}
+                        {"category": {"coding": [{"code": "submitted"}]}, "amount": {"value": 3700.0, "currency": "USD"}},
+                        {"category": {"coding": [{"code": "benefit"}]}, "amount": {"value": 3330.0, "currency": "USD"}},
+                        {"category": {"coding": [{"code": "copay"}]}, "amount": {"value": 370.0, "currency": "USD"}}
                     ]
                 }
             ))

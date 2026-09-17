@@ -17,7 +17,6 @@ import { InsuranceBillingCard } from '@/components/patient/InsuranceBillingCard'
 import type {
   FHIRPatient,
   HumanName,
-  ContactPoint,
   Address,
   FHIREncounter,
   FHIRObservation,
@@ -28,7 +27,23 @@ import type {
   FHIRClaim,
   FHIRClaimResponse,
 } from '@/types/fhir';
-
+import {
+  FiArrowLeft,
+  FiChevronRight,
+  FiUser,
+  FiCalendar,
+  FiActivity,
+  FiFileText,
+  FiCode,
+  FiChevronDown,
+  FiAlertCircle
+} from 'react-icons/fi';
+import {
+  FaHeartPulse,
+  FaStethoscope,
+  FaPills,
+  FaHospital
+} from 'react-icons/fa6';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -83,18 +98,18 @@ export default async function PatientDetailPage({ params }: PageProps) {
     }
     return (
       <div className="max-w-5xl mx-auto px-6 py-8">
-        <Card className="border-red-200 bg-red-50">
+        <Card className="border-rose-200 bg-rose-50">
           <div className="flex items-center gap-3">
-            <svg className="w-5 h-5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+            <FiAlertCircle className="w-5 h-5 text-rose-600 flex-shrink-0" />
             <div>
-              <p className="font-medium text-red-800">Error loading patient</p>
-              <p className="text-sm text-red-600 mt-0.5">{msg || 'An unexpected error occurred.'}</p>
+              <p className="font-medium text-rose-800">Error loading patient</p>
+              <p className="text-sm text-rose-600 mt-0.5">{msg || 'An unexpected error occurred.'}</p>
             </div>
           </div>
           <div className="mt-4">
-            <Link href="/patients" className="btn-secondary text-sm">← Back to Patients</Link>
+            <Link href="/patients" className="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-gray-300 rounded-lg text-xs font-semibold text-gray-700 hover:bg-gray-50">
+              <FiArrowLeft className="w-3.5 h-3.5" /> Back to Patients
+            </Link>
           </div>
         </Card>
       </div>
@@ -133,16 +148,16 @@ export default async function PatientDetailPage({ params }: PageProps) {
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-500">
         <Link href="/" className="hover:text-emerald-600 transition-colors">Home</Link>
-        <span>›</span>
+        <FiChevronRight className="w-3.5 h-3.5 text-gray-400" />
         <Link href="/patients" className="hover:text-emerald-600 transition-colors">Patients</Link>
-        <span>›</span>
+        <FiChevronRight className="w-3.5 h-3.5 text-gray-400" />
         <span className="text-gray-900 font-medium truncate max-w-xs">{displayName}</span>
       </nav>
 
       {/* Patient header */}
-      <Card className="bg-gradient-to-r from-emerald-50 via-teal-50 to-cyan-50 border-emerald-200">
+      <Card className="bg-gradient-to-r from-emerald-50/80 via-teal-50/50 to-white border-emerald-200 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-          <div className="flex-shrink-0 w-16 h-16 rounded-full bg-emerald-600 flex items-center justify-center text-white text-2xl font-bold shadow-sm">
+          <div className="flex-shrink-0 w-16 h-16 rounded-2xl bg-emerald-600 flex items-center justify-center text-white text-2xl font-bold shadow-md">
             {displayName.charAt(0).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
@@ -155,23 +170,37 @@ export default async function PatientDetailPage({ params }: PageProps) {
                 {patient.active !== false ? 'Active Patient' : 'Inactive'}
               </Badge>
               {patient.birthDate && (
-                <span className="text-sm text-gray-600">DOB: {patient.birthDate}</span>
+                <span className="text-xs text-gray-600 bg-white/80 px-2 py-0.5 rounded border border-gray-200">
+                  DOB: {patient.birthDate}
+                </span>
               )}
             </div>
-            <p className="text-xs text-gray-400 mt-1 font-mono">FHIR ID: {patient.id}</p>
+            <p className="text-xs text-gray-500 mt-1.5 font-mono">FHIR ID: {patient.id}</p>
           </div>
           <div className="flex gap-2 flex-shrink-0">
-            <Link href="/patients" className="btn-secondary text-sm">← Back to List</Link>
+            <Link
+              href="/patients"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 rounded-lg text-xs font-semibold text-gray-700 bg-white hover:bg-gray-50 transition"
+            >
+              <FiArrowLeft className="w-3.5 h-3.5" /> Back to Registry
+            </Link>
           </div>
         </div>
       </Card>
 
       {/* ─── Clinical Summary Section (Phase 2) ───────────────────────────── */}
-      <div className="border-t border-gray-200 pt-2">
-        <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <span className="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-          Clinical Summary & EHR Records
-        </h2>
+      <div className="border-t border-gray-200 pt-3">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <div className="p-1.5 bg-emerald-50 text-emerald-600 rounded-md">
+              <FiActivity className="w-5 h-5" />
+            </div>
+            Clinical Summary & EHR Records
+          </h2>
+          <span className="text-xs text-emerald-700 bg-emerald-50 font-medium px-2.5 py-1 rounded-full border border-emerald-200">
+            FHIR R4 Connected
+          </span>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
@@ -179,7 +208,9 @@ export default async function PatientDetailPage({ params }: PageProps) {
           <Card>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2">
-                <span className="text-rose-500">❤️</span>
+                <div className="p-1.5 bg-rose-50 text-rose-600 rounded-md">
+                  <FaHeartPulse className="w-4 h-4" />
+                </div>
                 Vitals & Observations ({observations.length})
               </h3>
             </div>
@@ -196,7 +227,7 @@ export default async function PatientDetailPage({ params }: PageProps) {
                         </p>
                       </div>
                       <div className="text-right">
-                        <span className="inline-block font-mono font-bold text-sm text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded">
+                        <span className="inline-block font-mono font-bold text-sm text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-100">
                           {val}
                         </span>
                       </div>
@@ -213,7 +244,9 @@ export default async function PatientDetailPage({ params }: PageProps) {
           <Card>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2">
-                <span className="text-amber-500">🩺</span>
+                <div className="p-1.5 bg-amber-50 text-amber-600 rounded-md">
+                  <FaStethoscope className="w-4 h-4" />
+                </div>
                 Diagnoses & Conditions ({conditions.length})
               </h3>
             </div>
@@ -225,7 +258,7 @@ export default async function PatientDetailPage({ params }: PageProps) {
                     <div key={cond.id} className="p-3 bg-amber-50/50 rounded-lg border border-amber-100 flex items-center justify-between">
                       <div>
                         <p className="font-medium text-gray-900 text-sm">{cond.code?.text || 'Diagnosis'}</p>
-                        {icd && <p className="text-xs text-amber-700 font-mono">ICD-10: {icd}</p>}
+                        {icd && <p className="text-xs text-amber-700 font-mono mt-0.5">ICD-10: {icd}</p>}
                       </div>
                       <div>
                         <Badge variant="yellow">Active</Badge>
@@ -243,7 +276,9 @@ export default async function PatientDetailPage({ params }: PageProps) {
           <Card>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2">
-                <span className="text-blue-500">💊</span>
+                <div className="p-1.5 bg-blue-50 text-blue-600 rounded-md">
+                  <FaPills className="w-4 h-4" />
+                </div>
                 Prescriptions & Medications ({medications.length})
               </h3>
             </div>
@@ -274,7 +309,9 @@ export default async function PatientDetailPage({ params }: PageProps) {
           <Card>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2">
-                <span className="text-indigo-500">🏥</span>
+                <div className="p-1.5 bg-indigo-50 text-indigo-600 rounded-md">
+                  <FaHospital className="w-4 h-4" />
+                </div>
                 Encounters & Consultations ({encounters.length})
               </h3>
             </div>
@@ -303,9 +340,11 @@ export default async function PatientDetailPage({ params }: PageProps) {
             {/* Upcoming Appointments subsection */}
             {appointments.length > 0 && (
               <div className="mt-4 pt-3 border-t border-gray-100">
-                <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Upcoming Appointment</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2 flex items-center gap-1">
+                  <FiCalendar className="w-3.5 h-3.5 text-gray-400" /> Upcoming Appointment
+                </p>
                 {appointments.map((apt) => (
-                  <div key={apt.id} className="p-2.5 bg-emerald-50 rounded border border-emerald-100 flex items-center justify-between">
+                  <div key={apt.id} className="p-2.5 bg-emerald-50 rounded-lg border border-emerald-100 flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-emerald-900">{apt.description || 'Consultation'}</p>
                       <p className="text-xs text-emerald-700">
@@ -331,8 +370,10 @@ export default async function PatientDetailPage({ params }: PageProps) {
       />
 
       {/* ─── Demographics Grid ───────────────────────────────────────────── */}
-      <div className="border-t border-gray-200 pt-2">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Demographics & Contact Information</h2>
+      <div className="border-t border-gray-200 pt-3">
+        <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <FiUser className="w-5 h-5 text-gray-700" /> Demographics & Identity
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
           {/* Basic Info */}
@@ -340,7 +381,7 @@ export default async function PatientDetailPage({ params }: PageProps) {
             <h3 className="text-sm font-semibold text-gray-900 mb-3">Profile Data</h3>
             <dl className="space-y-2.5 text-sm">
               <div className="flex justify-between">
-                <dt className="text-gray-500">Patient ID</dt>
+                <dt className="text-gray-500">Patient Logical ID</dt>
                 <dd className="font-mono text-gray-800 text-xs">{patient.id ?? '—'}</dd>
               </div>
               <div className="flex justify-between">
@@ -348,7 +389,7 @@ export default async function PatientDetailPage({ params }: PageProps) {
                 <dd className="text-gray-800 capitalize">{patient.gender ?? '—'}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-gray-500">Birth Date</dt>
+                <dt className="text-gray-500">Date of Birth</dt>
                 <dd className="text-gray-800">{patient.birthDate ?? '—'}</dd>
               </div>
               {patient.meta?.versionId && (
@@ -366,7 +407,7 @@ export default async function PatientDetailPage({ params }: PageProps) {
             {patient.name && patient.name.length > 0 ? (
               <div className="space-y-2">
                 {patient.name.map((n: HumanName, i: number) => (
-                  <div key={i} className="text-sm bg-gray-50 rounded p-2.5 space-y-1">
+                  <div key={i} className="text-sm bg-gray-50 rounded-lg p-2.5 space-y-1">
                     {n.family && (
                       <div className="flex justify-between">
                         <span className="text-gray-500">Family</span>
@@ -393,19 +434,15 @@ export default async function PatientDetailPage({ params }: PageProps) {
       {/* Raw FHIR JSON */}
       <Card>
         <details className="group">
-          <summary className="cursor-pointer flex items-center justify-between text-base font-semibold text-gray-900 list-none">
+          <summary className="cursor-pointer flex items-center justify-between text-sm font-semibold text-gray-900 list-none">
             <span className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-              </svg>
-              Raw FHIR Resource JSON
+              <FiCode className="w-4 h-4 text-emerald-600" />
+              Raw FHIR Resource JSON (HL7 R4)
             </span>
-            <svg className="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
+            <FiChevronDown className="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180" />
           </summary>
           <div className="mt-4">
-            <pre className="bg-gray-900 text-gray-100 rounded-lg p-4 text-xs overflow-x-auto leading-relaxed">
+            <pre className="bg-gray-950 text-gray-100 rounded-xl p-4 text-xs overflow-x-auto leading-relaxed font-mono">
               {JSON.stringify(patient, null, 2)}
             </pre>
           </div>

@@ -3,6 +3,18 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { getPatients } from '@/lib/api';
 import type { FHIRBundle } from '@/types/fhir';
+import {
+  FiUsers,
+  FiFileText,
+  FiActivity,
+  FiShield,
+  FiUserPlus,
+  FiArrowRight,
+  FiCheckCircle,
+  FiServer,
+  FiDatabase
+} from 'react-icons/fi';
+import { FaHeartPulse, FaHospital } from 'react-icons/fa6';
 
 async function fetchPatientCount(): Promise<number | null> {
   try {
@@ -22,45 +34,33 @@ export default async function HomePage() {
     {
       label: 'Total Patients',
       value: patientCount !== null ? patientCount.toString() : '—',
-      sub: patientCount !== null ? 'Registered in system' : 'API unavailable',
-      icon: (
-        <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-      ),
+      sub: patientCount !== null ? 'Registered in FHIR registry' : 'API unavailable',
+      icon: <FiUsers className="w-6 h-6 text-emerald-600" />,
+      bg: 'bg-emerald-50'
     },
     {
-      label: 'FHIR Version',
+      label: 'FHIR Standard',
       value: 'R4',
-      sub: '4.0.1',
-      icon: (
-        <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-        </svg>
-      ),
+      sub: 'HL7 Specification 4.0.1',
+      icon: <FiFileText className="w-6 h-6 text-blue-600" />,
+      bg: 'bg-blue-50'
     },
     {
       label: 'API Status',
       value: patientCount !== null ? 'Online' : 'Offline',
-      sub: patientCount !== null ? 'All systems operational' : 'Cannot reach backend',
-      icon: (
-        <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      ),
+      sub: patientCount !== null ? 'All services operational' : 'Cannot reach backend',
+      icon: <FiActivity className="w-6 h-6 text-emerald-600" />,
+      bg: 'bg-emerald-50',
       badge: patientCount !== null
         ? <Badge variant="green">Online</Badge>
         : <Badge variant="red">Offline</Badge>,
     },
     {
-      label: 'Compliance',
-      value: 'HL7',
-      sub: 'FHIR R4 Standard',
-      icon: (
-        <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-        </svg>
-      ),
+      label: 'HIPAA & RBAC',
+      value: 'Secured',
+      sub: 'JWT & Redis Revocation',
+      icon: <FiShield className="w-6 h-6 text-purple-600" />,
+      bg: 'bg-purple-50'
     },
   ];
 
@@ -68,36 +68,47 @@ export default async function HomePage() {
     <div className="max-w-7xl mx-auto px-6 py-10 space-y-10">
 
       {/* Hero */}
-      <section className="text-center py-12 bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-2xl text-white shadow-xl">
-        <div className="flex justify-center mb-4">
-          <div className="bg-white/20 backdrop-blur rounded-full p-4">
-            <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-            </svg>
+      <section className="text-center py-12 px-6 bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 rounded-2xl text-white shadow-xl relative overflow-hidden">
+        <div className="relative z-10">
+          <div className="flex justify-center mb-4">
+            <div className="bg-white/15 backdrop-blur-md rounded-2xl p-4 shadow-inner">
+              <FaHeartPulse className="w-12 h-12 text-white" />
+            </div>
           </div>
-        </div>
-        <h1 className="text-4xl font-bold mb-3">Welcome to Siru HealthHub</h1>
-        <p className="text-emerald-100 text-lg max-w-2xl mx-auto">
-          A modern, FHIR R4-compliant healthcare patient portal. Manage patient records,
-          search by demographics, and integrate seamlessly with HL7-compliant systems.
-        </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <Link href="/patients/new" className="btn-primary bg-white text-emerald-700 hover:bg-emerald-50 px-6 py-3 rounded-lg font-semibold shadow">
-            Register Patient
-          </Link>
-          <Link href="/patients" className="btn-secondary border-white text-white hover:bg-emerald-700 px-6 py-3 rounded-lg font-semibold">
-            View All Patients
-          </Link>
+          <h1 className="text-4xl font-bold mb-3 tracking-tight">Siru HealthHub Healthcare System</h1>
+          <p className="text-emerald-100 text-lg max-w-2xl mx-auto font-normal leading-relaxed">
+            Enterprise HL7 FHIR R4 clinical repository, real-time insurance eligibility (EDI 270/271),
+            automated claims adjudication engine, and HIPAA security intelligence.
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link
+              href="/patients/new"
+              className="inline-flex items-center gap-2 bg-white text-emerald-700 hover:bg-emerald-50 px-6 py-3 rounded-xl font-semibold shadow-md transition-all hover:shadow-lg"
+            >
+              <FiUserPlus className="w-4 h-4" /> Register Patient
+            </Link>
+            <Link
+              href="/patients"
+              className="inline-flex items-center gap-2 border border-white/60 text-white hover:bg-white/10 px-6 py-3 rounded-xl font-semibold transition-colors"
+            >
+              <FiUsers className="w-4 h-4" /> View Patient Registry
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* Stats grid */}
       <section>
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">System Overview</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold text-gray-800">Platform Overview</h2>
+          <span className="text-xs bg-emerald-50 text-emerald-700 font-medium px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1.5">
+            <FiCheckCircle className="w-3.5 h-3.5 text-emerald-600" /> Live System Telemetry
+          </span>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {stats.map((stat) => (
-            <Card key={stat.label} className="flex items-start gap-4">
-              <div className="flex-shrink-0 p-2 bg-gray-50 rounded-lg">
+            <Card key={stat.label} className="flex items-start gap-4 hover:shadow-md transition-shadow">
+              <div className={`flex-shrink-0 p-3 ${stat.bg} rounded-xl`}>
                 {stat.icon}
               </div>
               <div className="min-w-0">
@@ -116,50 +127,42 @@ export default async function HomePage() {
 
       {/* Quick Actions */}
       <section>
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Quick Actions</h2>
+        <h2 className="text-xl font-bold text-gray-800 mb-4">Clinical & Operational Portals</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Link href="/patients/new" className="group">
             <Card className="h-full hover:shadow-lg hover:border-emerald-300 transition-all duration-200 cursor-pointer">
               <div className="flex items-center gap-4">
-                <div className="flex-shrink-0 p-3 bg-emerald-100 rounded-xl group-hover:bg-emerald-200 transition-colors">
-                  <svg className="w-7 h-7 text-emerald-700" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                  </svg>
+                <div className="flex-shrink-0 p-3.5 bg-emerald-50 text-emerald-700 rounded-xl group-hover:bg-emerald-100 transition-colors">
+                  <FiUserPlus className="w-7 h-7" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 group-hover:text-emerald-700 transition-colors">
                     Register New Patient
                   </h3>
                   <p className="text-sm text-gray-500 mt-1">
-                    Add a new patient record with FHIR R4 compliant data entry
+                    Add a new patient record with FHIR R4 compliant demographics and identifiers
                   </p>
                 </div>
-                <svg className="ml-auto w-5 h-5 text-gray-400 group-hover:text-emerald-600 flex-shrink-0 transition-colors" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
+                <FiArrowRight className="ml-auto w-5 h-5 text-gray-400 group-hover:text-emerald-600 group-hover:translate-x-1 flex-shrink-0 transition-all" />
               </div>
             </Card>
           </Link>
 
           <Link href="/patients" className="group">
-            <Card className="h-full hover:shadow-lg hover:border-emerald-300 transition-all duration-200 cursor-pointer">
+            <Card className="h-full hover:shadow-lg hover:border-blue-300 transition-all duration-200 cursor-pointer">
               <div className="flex items-center gap-4">
-                <div className="flex-shrink-0 p-3 bg-blue-100 rounded-xl group-hover:bg-blue-200 transition-colors">
-                  <svg className="w-7 h-7 text-blue-700" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                  </svg>
+                <div className="flex-shrink-0 p-3.5 bg-blue-50 text-blue-700 rounded-xl group-hover:bg-blue-100 transition-colors">
+                  <FiUsers className="w-7 h-7" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">
                     View All Patients
                   </h3>
                   <p className="text-sm text-gray-500 mt-1">
-                    Browse, search, and filter your patient registry
+                    Browse, search, and filter clinical EHR records, vitals, and billing claims
                   </p>
                 </div>
-                <svg className="ml-auto w-5 h-5 text-gray-400 group-hover:text-blue-600 flex-shrink-0 transition-colors" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
+                <FiArrowRight className="ml-auto w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 flex-shrink-0 transition-all" />
               </div>
             </Card>
           </Link>
@@ -168,20 +171,26 @@ export default async function HomePage() {
 
       {/* System Info */}
       <section>
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">System Information</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold text-gray-800">System Infrastructure</h2>
+          <span className="text-xs text-gray-500 font-mono">TLS 1.3 / Reverse Proxy</span>
+        </div>
         <Card className="overflow-hidden p-0">
           <table className="w-full text-sm">
             <tbody className="divide-y divide-gray-100">
               {[
-                { key: 'API Base URL',    value: API_URL },
-                { key: 'FHIR Base URL',   value: `${API_URL}/fhir` },
-                { key: 'FHIR Version',    value: 'R4 (4.0.1)' },
-                { key: 'Standard',        value: 'HL7 FHIR R4' },
-                { key: 'Database Status', value: patientCount !== null ? 'Connected' : 'Unreachable' },
-                { key: 'Patient Count',   value: patientCount !== null ? `${patientCount} registered` : 'Unknown' },
-              ].map(({ key, value }) => (
-                <tr key={key} className="hover:bg-gray-50">
-                  <td className="px-6 py-3 font-medium text-gray-600 w-48">{key}</td>
+                { key: 'API Base URL',    value: API_URL, icon: FiServer },
+                { key: 'FHIR Base URL',   value: `${API_URL}/fhir`, icon: FiServer },
+                { key: 'FHIR Version',    value: 'R4 (4.0.1)', icon: FiFileText },
+                { key: 'Standard',        value: 'HL7 FHIR R4', icon: FiShield },
+                { key: 'Database Status', value: patientCount !== null ? 'PostgreSQL 15 Connected' : 'Unreachable', icon: FiDatabase },
+                { key: 'Patient Registry', value: patientCount !== null ? `${patientCount} active records` : 'Unknown', icon: FiUsers },
+              ].map(({ key, value, icon: RowIcon }) => (
+                <tr key={key} className="hover:bg-gray-50/75 transition-colors">
+                  <td className="px-6 py-3 font-medium text-gray-600 w-56 flex items-center gap-2">
+                    <RowIcon className="w-4 h-4 text-gray-400" />
+                    {key}
+                  </td>
                   <td className="px-6 py-3 text-gray-800 font-mono text-xs">{value}</td>
                 </tr>
               ))}

@@ -71,11 +71,11 @@ def test_submit_clean_claim_auto_adjudicates(base_url):
             {
                 "sequence": 1,
                 "productOrService": {"coding": [{"code": "99213", "display": "Office Visit"}]},
-                "unitPrice": {"value": 1500.0, "currency": "INR"},
+                "unitPrice": {"value": 1500.0, "currency": "USD"},
                 "quantity": {"value": 1}
             }
         ],
-        "total": {"value": 1500.0, "currency": "INR"}
+        "total": {"value": 1500.0, "currency": "USD"}
     }
 
     res = requests.post(_url(base_url, "/fhir/Claim"), json=claim_payload, headers=_headers(base_url))
@@ -111,7 +111,7 @@ def test_adjudication_math_integrity(base_url):
         "patient": {"reference": "Patient/P1001"},
         "provider": {"reference": "Practitioner/PR101"},
         "insurance": [{"sequence": 1, "focal": True, "coverage": {"reference": "Coverage/COV1001"}}],
-        "total": {"value": submitted_amt, "currency": "INR"}
+        "total": {"value": submitted_amt, "currency": "USD"}
     }
 
     res = requests.post(_url(base_url, "/fhir/Claim"), json=claim_payload, headers=_headers(base_url))
@@ -133,7 +133,7 @@ def test_claim_auto_denial_on_expired_coverage(base_url):
         "patient": {"reference": "Patient/P1001"},
         "provider": {"reference": "Practitioner/PR101"},
         "insurance": [{"sequence": 1, "focal": True, "coverage": {"reference": "Coverage/COV_EXPIRED"}}],
-        "total": {"value": 2500.0, "currency": "INR"}
+        "total": {"value": 2500.0, "currency": "USD"}
     }
 
     res = requests.post(_url(base_url, "/fhir/Claim"), json=claim_payload, headers=_headers(base_url))
@@ -154,7 +154,7 @@ def test_zero_amount_claim_rejected_422(base_url):
         "status": "active",
         "use": "claim",
         "patient": {"reference": "Patient/P1001"},
-        "total": {"value": 0.0, "currency": "INR"}
+        "total": {"value": 0.0, "currency": "USD"}
     }
     res = requests.post(_url(base_url, "/fhir/Claim"), json=claim_payload, headers=_headers(base_url))
     assert res.status_code == 422
@@ -174,7 +174,7 @@ def test_doctor_allowed_to_submit_claim(base_url):
         "patient": {"reference": "Patient/P1001"},
         "provider": {"reference": "Practitioner/PR101"},
         "insurance": [{"sequence": 1, "focal": True, "coverage": {"reference": "Coverage/COV1001"}}],
-        "total": {"value": 800.0, "currency": "INR"}
+        "total": {"value": 800.0, "currency": "USD"}
     }
     res = requests.post(_url(base_url, "/fhir/Claim"), json=claim_payload, headers=h)
     assert res.status_code == 201
@@ -190,7 +190,7 @@ def test_nurse_forbidden_from_submitting_claim_403(base_url):
         "status": "active",
         "use": "claim",
         "patient": {"reference": "Patient/P1001"},
-        "total": {"value": 500.0, "currency": "INR"}
+        "total": {"value": 500.0, "currency": "USD"}
     }
     res = requests.post(_url(base_url, "/fhir/Claim"), json=claim_payload, headers=h)
     assert res.status_code == 403
@@ -206,7 +206,7 @@ def test_patient_forbidden_from_submitting_claim_403(base_url):
         "status": "active",
         "use": "claim",
         "patient": {"reference": "Patient/P1001"},
-        "total": {"value": 500.0, "currency": "INR"}
+        "total": {"value": 500.0, "currency": "USD"}
     }
     res = requests.post(_url(base_url, "/fhir/Claim"), json=claim_payload, headers=h)
     assert res.status_code == 403
@@ -238,7 +238,7 @@ def test_patient_forbidden_from_viewing_other_patient_claims_403(base_url):
         "use": "claim",
         "patient": {"reference": "Patient/P1002"},
         "insurance": [{"sequence": 1, "focal": True, "coverage": {"reference": "Coverage/COV1002"}}],
-        "total": {"value": 1200.0, "currency": "INR"}
+        "total": {"value": 1200.0, "currency": "USD"}
     }, headers=admin_h)
 
     # Patient Arun tries to read Priya's claim

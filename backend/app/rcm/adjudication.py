@@ -98,13 +98,13 @@ def adjudicate_claim(
                         "category": {
                             "coding": [{"system": "http://terminology.hl7.org/CodeSystem/adjudication", "code": "benefit"}]
                         },
-                        "amount": {"value": it_benefit, "currency": "INR"}
+                        "amount": {"value": it_benefit, "currency": "USD"}
                     },
                     {
                         "category": {
                             "coding": [{"system": "http://terminology.hl7.org/CodeSystem/adjudication", "code": "copay"}]
                         },
-                        "amount": {"value": it_patient, "currency": "INR"}
+                        "amount": {"value": it_patient, "currency": "USD"}
                     }
                 ]
             })
@@ -123,7 +123,7 @@ def adjudicate_claim(
                         "category": {
                             "coding": [{"system": "http://terminology.hl7.org/CodeSystem/adjudication", "code": "benefit"}]
                         },
-                        "amount": {"value": 0.0, "currency": "INR"},
+                        "amount": {"value": 0.0, "currency": "USD"},
                         "reason": {"text": denial_reason}
                     }
                 ]
@@ -153,19 +153,19 @@ def adjudicate_claim(
                 "category": {
                     "coding": [{"system": "http://terminology.hl7.org/CodeSystem/adjudication", "code": "submitted"}]
                 },
-                "amount": {"value": claim_total, "currency": "INR"}
+                "amount": {"value": claim_total, "currency": "USD"}
             },
             {
                 "category": {
                     "coding": [{"system": "http://terminology.hl7.org/CodeSystem/adjudication", "code": "benefit"}]
                 },
-                "amount": {"value": total_benefit, "currency": "INR"}
+                "amount": {"value": total_benefit, "currency": "USD"}
             },
             {
                 "category": {
                     "coding": [{"system": "http://terminology.hl7.org/CodeSystem/adjudication", "code": "copay"}]
                 },
-                "amount": {"value": total_patient_paid, "currency": "INR"}
+                "amount": {"value": total_patient_paid, "currency": "USD"}
             }
         ],
         "item": adjudicated_items

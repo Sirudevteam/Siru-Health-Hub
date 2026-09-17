@@ -5,6 +5,17 @@ import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { getApiBase } from '@/lib/api';
+import {
+  FiShield,
+  FiRefreshCw,
+  FiFilter,
+  FiCheckCircle,
+  FiAlertCircle,
+  FiUser,
+  FiClock,
+  FiAlertTriangle,
+  FiKey
+} from 'react-icons/fi';
 
 interface AuditLogEntry {
   id: number;
@@ -97,19 +108,22 @@ export default function AuditLogsPage() {
             <span className="text-gray-900 font-medium">Audit & Compliance</span>
           </nav>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2.5">
-            <span>🛡️</span> HIPAA Security & Audit Trail
+            <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+              <FiShield className="w-6 h-6" />
+            </div>
+            HIPAA Security & Audit Trail
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Real-time compliance monitoring, user identity tracking, and access log ledger.
+            Real-time compliance monitoring, user identity tracking, and cryptographic immutable access ledger.
           </p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={fetchAuditData}
             disabled={loading}
-            className="px-3 py-1.5 text-xs font-semibold bg-gray-100 hover:bg-gray-200 text-gray-700 rounded transition flex items-center gap-1.5"
+            className="px-3.5 py-2 text-xs font-semibold bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition flex items-center gap-1.5 border disabled:opacity-50"
           >
-            🔄 Refresh Logs
+            <FiRefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} /> Refresh Logs
           </button>
         </div>
       </div>
@@ -118,24 +132,32 @@ export default function AuditLogsPage() {
       {stats && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <Card className="border-l-4 border-l-blue-500 p-4">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Audit Events</p>
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider flex items-center gap-1">
+              <FiShield className="w-3.5 h-3.5 text-blue-500" /> Total Audit Events
+            </p>
             <p className="text-2xl font-bold text-gray-900 mt-1">{stats.total_events}</p>
             <p className="text-[11px] text-gray-400 mt-0.5">Immutable database ledger</p>
           </Card>
           <Card className="border-l-4 border-l-emerald-500 p-4">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Success Operations</p>
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider flex items-center gap-1">
+              <FiCheckCircle className="w-3.5 h-3.5 text-emerald-500" /> Success Operations
+            </p>
             <p className="text-2xl font-bold text-emerald-600 mt-1">{stats.success_count}</p>
             <p className="text-[11px] text-gray-400 mt-0.5">
               {stats.total_events > 0 ? `${Math.round((stats.success_count / stats.total_events) * 100)}% compliance` : '100%'}
             </p>
           </Card>
           <Card className="border-l-4 border-l-amber-500 p-4">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">401 Unauthorized</p>
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider flex items-center gap-1">
+              <FiKey className="w-3.5 h-3.5 text-amber-500" /> 401 Unauthorized
+            </p>
             <p className="text-2xl font-bold text-amber-600 mt-1">{stats.unauthorized_401_count}</p>
             <p className="text-[11px] text-gray-400 mt-0.5">Unauthenticated attempts</p>
           </Card>
           <Card className="border-l-4 border-l-rose-500 p-4">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">403 RBAC Blocks</p>
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider flex items-center gap-1">
+              <FiAlertTriangle className="w-3.5 h-3.5 text-rose-500" /> 403 RBAC Blocks
+            </p>
             <p className="text-2xl font-bold text-rose-600 mt-1">{stats.forbidden_403_count}</p>
             <p className="text-[11px] text-gray-400 mt-0.5">Forbidden permission alerts</p>
           </Card>
@@ -144,6 +166,10 @@ export default function AuditLogsPage() {
 
       {/* Filter Bar */}
       <Card className="p-4">
+        <div className="flex items-center gap-2 mb-3 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+          <FiFilter className="w-4 h-4 text-emerald-600" />
+          Filter Audit Trail
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
           <div>
             <label className="block text-gray-600 font-medium mb-1">Filter by User</label>
@@ -152,7 +178,7 @@ export default function AuditLogsPage() {
               placeholder="e.g. doctor.sharma, patient.arun"
               value={filterUser}
               onChange={(e) => setFilterUser(e.target.value)}
-              className="w-full border rounded px-3 py-1.5 text-gray-800"
+              className="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-gray-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
             />
           </div>
           <div>
@@ -160,7 +186,7 @@ export default function AuditLogsPage() {
             <select
               value={filterAction}
               onChange={(e) => setFilterAction(e.target.value)}
-              className="w-full border rounded px-2.5 py-1.5 text-gray-800"
+              className="w-full border border-gray-300 rounded-lg px-2.5 py-1.5 text-gray-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
             >
               <option value="">All Actions</option>
               <option value="CREATE">CREATE (POST)</option>
@@ -175,7 +201,7 @@ export default function AuditLogsPage() {
             <select
               value={filterResult}
               onChange={(e) => setFilterResult(e.target.value)}
-              className="w-full border rounded px-2.5 py-1.5 text-gray-800"
+              className="w-full border border-gray-300 rounded-lg px-2.5 py-1.5 text-gray-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
             >
               <option value="">All Outcomes</option>
               <option value="SUCCESS">SUCCESS (&lt; 400)</option>
@@ -188,23 +214,27 @@ export default function AuditLogsPage() {
       {/* Logs Table */}
       <Card className="overflow-hidden p-0">
         <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-          <h3 className="font-semibold text-gray-900 text-sm">Security Ledger Entries ({logs.length})</h3>
+          <h3 className="font-semibold text-gray-900 text-sm flex items-center gap-1.5">
+            <FiClock className="w-4 h-4 text-gray-500" />
+            Security Ledger Entries ({logs.length})
+          </h3>
           <span className="text-xs text-gray-400">Showing newest 50 events</span>
         </div>
 
         {error && (
-          <div className="p-4 bg-rose-50 text-rose-700 text-xs border-b border-rose-100">
-            {error}
+          <div className="p-4 bg-rose-50 text-rose-700 text-xs border-b border-rose-100 flex items-center gap-2">
+            <FiAlertCircle className="w-4 h-4 flex-shrink-0" />
+            <span>{error}</span>
           </div>
         )}
 
         {loading && logs.length === 0 ? (
-          <div className="p-8 text-center text-xs text-gray-500">
+          <div className="p-12 text-center text-xs text-gray-500">
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-600 mx-auto mb-2"></div>
             Loading audit records...
           </div>
         ) : logs.length === 0 ? (
-          <div className="p-8 text-center text-xs text-gray-400 italic">
+          <div className="p-12 text-center text-xs text-gray-400 italic">
             No audit records matching specified filters.
           </div>
         ) : (
@@ -233,7 +263,10 @@ export default function AuditLogsPage() {
                         {log.user_id === 'Anonymous / Unauthenticated' ? (
                           <span className="text-gray-400 italic">anonymous</span>
                         ) : (
-                          <span className="text-blue-600 font-mono">{log.user_id}</span>
+                          <span className="text-blue-600 font-mono flex items-center gap-1">
+                            <FiUser className="w-3 h-3 text-blue-400" />
+                            {log.user_id}
+                          </span>
                         )}
                       </td>
                       <td className="py-2.5 px-4 font-semibold text-gray-700">{log.action}</td>
@@ -270,4 +303,3 @@ export default function AuditLogsPage() {
     </div>
   );
 }
-

@@ -5,6 +5,19 @@ import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { getApiBase } from '@/lib/api';
+import {
+  FiTrendingUp,
+  FiDollarSign,
+  FiBarChart2,
+  FiRefreshCw,
+  FiActivity,
+  FiCheckCircle,
+  FiAlertCircle,
+  FiShield,
+  FiArrowRight,
+  FiUsers
+} from 'react-icons/fi';
+import { FaHospital, FaStethoscope, FaPills } from 'react-icons/fa6';
 
 interface AnalyticsData {
   financial: {
@@ -70,7 +83,10 @@ export default function AnalyticsPage() {
             <span className="text-gray-900 font-medium">Executive Analytics</span>
           </nav>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2.5">
-            <span>📈</span> Executive RCM & Clinical Intelligence
+            <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+              <FiTrendingUp className="w-6 h-6" />
+            </div>
+            Executive RCM & Clinical Intelligence
           </h1>
           <p className="text-sm text-gray-500 mt-1">
             Real-time revenue cycle performance, clinical population census, and system health metrics.
@@ -81,29 +97,31 @@ export default function AnalyticsPage() {
             href="/metrics"
             target="_blank"
             rel="noreferrer"
-            className="px-3 py-1.5 text-xs font-semibold bg-gray-100 hover:bg-gray-200 text-gray-700 rounded transition border"
+            className="px-3.5 py-2 text-xs font-semibold bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition border flex items-center gap-1.5"
           >
-            📊 Prometheus /metrics
+            <FiBarChart2 className="w-3.5 h-3.5" /> Prometheus /metrics
           </a>
           <button
             onClick={fetchAnalytics}
-            className="px-3 py-1.5 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded transition"
+            disabled={loading}
+            className="px-3.5 py-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition flex items-center gap-1.5 disabled:opacity-50"
           >
-            🔄 Refresh
+            <FiRefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} /> Refresh
           </button>
         </div>
       </div>
 
       {error && (
-        <div className="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-lg text-xs">
-          {error}
+        <div className="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs flex items-center gap-2">
+          <FiAlertCircle className="w-4 h-4 flex-shrink-0" />
+          <span>{error}</span>
         </div>
       )}
 
       {loading && !data ? (
-        <div className="p-12 text-center text-gray-500 text-sm">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-3"></div>
-          Aggregating enterprise healthcare metrics...
+        <div className="p-16 text-center text-gray-500 text-sm">
+          <div className="animate-spin rounded-full h-9 w-9 border-b-2 border-emerald-600 mx-auto mb-3"></div>
+          Aggregating enterprise healthcare intelligence...
         </div>
       ) : data ? (
         <div className="space-y-8">
@@ -111,10 +129,13 @@ export default function AnalyticsPage() {
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                <span>💰</span> Revenue Cycle Management (RCM) Performance
+                <div className="p-1.5 bg-emerald-100 text-emerald-800 rounded-md">
+                  <FiDollarSign className="w-4 h-4" />
+                </div>
+                Revenue Cycle Management (RCM) Performance
               </h2>
               <span className="text-xs bg-emerald-50 text-emerald-700 font-medium px-2.5 py-0.5 rounded-full border border-emerald-200">
-                Live Claims Adjudication
+                Live Claims Adjudication (USD)
               </span>
             </div>
 
@@ -122,7 +143,7 @@ export default function AnalyticsPage() {
               <Card className="border-l-4 border-l-blue-600">
                 <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Claims Value</p>
                 <p className="text-2xl font-bold text-gray-900 mt-1">
-                  ₹{data.financial.totalBilledAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  ${data.financial.totalBilledAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
                 <p className="text-xs text-gray-400 mt-0.5">{data.financial.totalClaimsCount} claims submitted</p>
               </Card>
@@ -130,7 +151,7 @@ export default function AnalyticsPage() {
               <Card className="border-l-4 border-l-emerald-600">
                 <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Insurer Reimbursement</p>
                 <p className="text-2xl font-bold text-emerald-600 mt-1">
-                  ₹{data.financial.totalInsurerBenefit.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  ${data.financial.totalInsurerBenefit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
                 <p className="text-xs text-emerald-700 font-medium mt-0.5">Paid by Payer policies (90%)</p>
               </Card>
@@ -138,7 +159,7 @@ export default function AnalyticsPage() {
               <Card className="border-l-4 border-l-amber-600">
                 <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Patient Copay Balance</p>
                 <p className="text-2xl font-bold text-amber-600 mt-1">
-                  ₹{data.financial.totalPatientCopay.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  ${data.financial.totalPatientCopay.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
                 <p className="text-xs text-gray-400 mt-0.5">Coinsurance & Deductibles</p>
               </Card>
@@ -157,35 +178,38 @@ export default function AnalyticsPage() {
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                <span>🏥</span> Clinical Population Health & Volume
+                <div className="p-1.5 bg-blue-100 text-blue-800 rounded-md">
+                  <FaHospital className="w-4 h-4" />
+                </div>
+                Clinical Population Health & Volume
               </h2>
               <span className="text-xs bg-blue-50 text-blue-700 font-medium px-2.5 py-0.5 rounded-full border border-blue-200">
-                FHIR R4 Database
+                FHIR R4 Enterprise Graph
               </span>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-              <Card className="text-center p-4">
+              <Card className="text-center p-4 hover:border-emerald-300 transition-colors">
                 <p className="text-xs text-gray-500 font-medium">Patients</p>
                 <p className="text-xl font-bold text-gray-900 mt-1">{data.clinical.totalPatients}</p>
               </Card>
-              <Card className="text-center p-4">
+              <Card className="text-center p-4 hover:border-blue-300 transition-colors">
                 <p className="text-xs text-gray-500 font-medium">Encounters</p>
                 <p className="text-xl font-bold text-gray-900 mt-1">{data.clinical.totalEncounters}</p>
               </Card>
-              <Card className="text-center p-4">
+              <Card className="text-center p-4 hover:border-teal-300 transition-colors">
                 <p className="text-xs text-gray-500 font-medium">Observations</p>
                 <p className="text-xl font-bold text-gray-900 mt-1">{data.clinical.totalObservations}</p>
               </Card>
-              <Card className="text-center p-4">
+              <Card className="text-center p-4 hover:border-amber-300 transition-colors">
                 <p className="text-xs text-gray-500 font-medium">Diagnoses</p>
                 <p className="text-xl font-bold text-gray-900 mt-1">{data.clinical.totalConditions}</p>
               </Card>
-              <Card className="text-center p-4">
+              <Card className="text-center p-4 hover:border-indigo-300 transition-colors">
                 <p className="text-xs text-gray-500 font-medium">Prescriptions</p>
                 <p className="text-xl font-bold text-gray-900 mt-1">{data.clinical.totalMedications}</p>
               </Card>
-              <Card className="text-center p-4">
+              <Card className="text-center p-4 hover:border-cyan-300 transition-colors">
                 <p className="text-xs text-gray-500 font-medium">Coverages</p>
                 <p className="text-xl font-bold text-gray-900 mt-1">{data.clinical.totalCoverages}</p>
               </Card>
@@ -197,7 +221,10 @@ export default function AnalyticsPage() {
             {/* Top Diagnoses */}
             <Card>
               <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center justify-between">
-                <span>Top Clinical Diagnoses (ICD-10)</span>
+                <span className="flex items-center gap-1.5">
+                  <FaStethoscope className="w-4 h-4 text-emerald-600" />
+                  Top Clinical Diagnoses (ICD-10)
+                </span>
                 <span className="text-xs text-gray-400 font-normal">Active Patient Conditions</span>
               </h3>
               {data.clinical.topConditions.length === 0 ? (
@@ -225,7 +252,10 @@ export default function AnalyticsPage() {
             {/* Claims Adjudication Distribution */}
             <Card>
               <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center justify-between">
-                <span>Claims Adjudication Outcome Ratio</span>
+                <span className="flex items-center gap-1.5">
+                  <FiDollarSign className="w-4 h-4 text-blue-600" />
+                  Claims Adjudication Outcome Ratio
+                </span>
                 <span className="text-xs text-gray-400 font-normal">Payer Decision Engine</span>
               </h3>
 
@@ -247,22 +277,28 @@ export default function AnalyticsPage() {
                 </div>
 
                 {/* Ratio Bar */}
-                <div className="w-full h-4 bg-gray-100 rounded-full overflow-hidden flex">
+                <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden flex">
                   <div
-                    className="bg-emerald-500 h-full"
+                    className="bg-emerald-500 h-full transition-all duration-500"
                     style={{ width: `${data.financial.cleanClaimRatePercent}%` }}
                     title={`Approved: ${data.financial.cleanClaimRatePercent}%`}
                   ></div>
                   <div
-                    className="bg-rose-500 h-full"
+                    className="bg-rose-500 h-full transition-all duration-500"
                     style={{ width: `${data.financial.denialRatePercent}%` }}
                     title={`Denied: ${data.financial.denialRatePercent}%`}
                   ></div>
                 </div>
 
-                <div className="pt-2 border-t text-xs text-gray-500 flex justify-between">
-                  <span>HIPAA Audit Events: <strong className="text-gray-800">{data.security.totalAuditEvents}</strong></span>
-                  <span>403 Blocks: <strong className="text-rose-600">{data.security.forbidden403Count}</strong></span>
+                <div className="pt-3 border-t border-gray-100 text-xs text-gray-500 flex justify-between">
+                  <span className="flex items-center gap-1">
+                    <FiShield className="w-3.5 h-3.5 text-blue-600" />
+                    HIPAA Audit Events: <strong className="text-gray-800 ml-1">{data.security.totalAuditEvents}</strong>
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <FiAlertCircle className="w-3.5 h-3.5 text-rose-600" />
+                    403 Blocks: <strong className="text-rose-600 ml-1">{data.security.forbidden403Count}</strong>
+                  </span>
                 </div>
               </div>
             </Card>
@@ -272,4 +308,3 @@ export default function AnalyticsPage() {
     </div>
   );
 }
-

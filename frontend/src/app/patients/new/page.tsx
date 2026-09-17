@@ -5,6 +5,17 @@ import Link from 'next/link';
 import { createPatient } from '@/lib/api';
 import { Card } from '@/components/ui/Card';
 import type { FHIRPatient } from '@/types/fhir';
+import {
+  FiUserPlus,
+  FiUser,
+  FiPhone,
+  FiMapPin,
+  FiCheckCircle,
+  FiAlertCircle,
+  FiArrowLeft,
+  FiCalendar,
+  FiMail
+} from 'react-icons/fi';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -43,7 +54,7 @@ const initialForm: FormState = {
   city: '',
   state: '',
   postalCode: '',
-  country: '',
+  country: 'United States',
 };
 
 // ─── Build FHIR payload ──────────────────────────────────────────────────────
@@ -142,25 +153,31 @@ export default function NewPatientPage() {
 
     return (
       <div className="max-w-2xl mx-auto px-6 py-12">
-        <Card className="text-center border-emerald-200 bg-emerald-50">
+        <Card className="text-center border-emerald-200 bg-gradient-to-b from-emerald-50/60 to-white shadow-md p-8">
           <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center">
-              <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+            <div className="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center shadow-inner">
+              <FiCheckCircle className="w-9 h-9" />
             </div>
           </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Patient Registered!</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Patient Enrolled Successfully</h2>
           <p className="text-gray-600 mb-1">
-            <span className="font-semibold text-gray-900">{name || 'Patient'}</span> has been successfully registered.
+            <span className="font-semibold text-gray-900">{name || 'Patient'}</span> has been assigned a logical FHIR logical ID.
           </p>
-          <p className="text-xs text-gray-400 font-mono mb-6">ID: {createdPatient.id}</p>
+          <p className="text-xs text-gray-500 font-mono mb-6 bg-white py-1 px-3 rounded border inline-block">
+            Logical ID: {createdPatient.id}
+          </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href={`/patients/${createdPatient.id}`} className="btn-primary">
-              View Patient Record
+            <Link
+              href={`/patients/${createdPatient.id}`}
+              className="inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg font-semibold text-sm shadow-sm transition"
+            >
+              View Clinical Record
             </Link>
-            <button onClick={handleReset} className="btn-secondary">
-              Register Another Patient
+            <button
+              onClick={handleReset}
+              className="inline-flex items-center justify-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-2.5 rounded-lg font-semibold text-sm transition"
+            >
+              Enroll Another Patient
             </button>
           </div>
         </Card>
@@ -175,21 +192,29 @@ export default function NewPatientPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Register New Patient</h1>
-          <p className="text-sm text-gray-500 mt-1">Create a FHIR R4 compliant patient record</p>
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+              <FiUserPlus className="w-6 h-6" />
+            </div>
+            Enroll New Patient
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">Create an HL7 FHIR R4 compliant master patient record</p>
         </div>
-        <Link href="/patients" className="btn-secondary text-sm">Cancel</Link>
+        <Link
+          href="/patients"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 rounded-lg text-xs font-semibold text-gray-700 bg-white hover:bg-gray-50 transition"
+        >
+          <FiArrowLeft className="w-3.5 h-3.5" /> Back
+        </Link>
       </div>
 
       {/* Global error */}
       {submitError && (
-        <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 flex items-start gap-3">
-          <svg className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+        <div className="bg-rose-50 border border-rose-200 rounded-xl px-4 py-3 flex items-start gap-3">
+          <FiAlertCircle className="w-5 h-5 text-rose-600 flex-shrink-0 mt-0.5" />
           <div>
-            <p className="font-medium text-red-800 text-sm">Registration failed</p>
-            <p className="text-red-600 text-sm mt-0.5">{submitError}</p>
+            <p className="font-medium text-rose-800 text-sm">Enrollment failed</p>
+            <p className="text-rose-600 text-xs mt-0.5">{submitError}</p>
           </div>
         </div>
       )}
@@ -199,49 +224,51 @@ export default function NewPatientPage() {
         {/* Section 1: Basic Information */}
         <Card>
           <h2 className="text-base font-semibold text-gray-900 mb-5 pb-3 border-b border-gray-100 flex items-center gap-2">
-            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold">1</span>
-            Basic Information
+            <span className="flex items-center justify-center w-6 h-6 rounded-lg bg-emerald-100 text-emerald-700 text-xs font-bold">
+              <FiUser className="w-3.5 h-3.5" />
+            </span>
+            Basic Demographics
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="firstName" className="form-label">
-                First Name <span className="text-red-500">*</span>
+              <label htmlFor="firstName" className="block text-xs font-semibold text-gray-700 mb-1">
+                First Name <span className="text-rose-500">*</span>
               </label>
               <input
                 id="firstName"
                 type="text"
-                placeholder="e.g. Arun"
+                placeholder="e.g. Robert"
                 value={form.firstName}
                 onChange={(e) => update('firstName', e.target.value)}
-                className={`form-input ${errors.firstName ? 'border-red-400 focus:border-red-400 focus:ring-red-400' : ''}`}
+                className={`w-full border rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 ${errors.firstName ? 'border-rose-400 focus:ring-rose-400' : 'border-gray-300 focus:ring-emerald-500'}`}
               />
-              {errors.firstName && <p className="form-error">{errors.firstName}</p>}
+              {errors.firstName && <p className="text-xs text-rose-600 mt-1">{errors.firstName}</p>}
             </div>
 
             <div>
-              <label htmlFor="lastName" className="form-label">
-                Last Name / Family Name <span className="text-red-500">*</span>
+              <label htmlFor="lastName" className="block text-xs font-semibold text-gray-700 mb-1">
+                Last Name / Family Name <span className="text-rose-500">*</span>
               </label>
               <input
                 id="lastName"
                 type="text"
-                placeholder="e.g. Kumar"
+                placeholder="e.g. Miller"
                 value={form.lastName}
                 onChange={(e) => update('lastName', e.target.value)}
-                className={`form-input ${errors.lastName ? 'border-red-400 focus:border-red-400 focus:ring-red-400' : ''}`}
+                className={`w-full border rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 ${errors.lastName ? 'border-rose-400 focus:ring-rose-400' : 'border-gray-300 focus:ring-emerald-500'}`}
               />
-              {errors.lastName && <p className="form-error">{errors.lastName}</p>}
+              {errors.lastName && <p className="text-xs text-rose-600 mt-1">{errors.lastName}</p>}
             </div>
 
             <div>
-              <label htmlFor="gender" className="form-label">
-                Gender <span className="text-red-500">*</span>
+              <label htmlFor="gender" className="block text-xs font-semibold text-gray-700 mb-1">
+                Administrative Gender <span className="text-rose-500">*</span>
               </label>
               <select
                 id="gender"
                 value={form.gender}
                 onChange={(e) => update('gender', e.target.value)}
-                className={`form-input ${errors.gender ? 'border-red-400 focus:border-red-400 focus:ring-red-400' : ''}`}
+                className={`w-full border rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 ${errors.gender ? 'border-rose-400 focus:ring-rose-400' : 'border-gray-300 focus:ring-emerald-500'}`}
               >
                 <option value="">Select gender...</option>
                 <option value="male">Male</option>
@@ -249,12 +276,12 @@ export default function NewPatientPage() {
                 <option value="other">Other</option>
                 <option value="unknown">Unknown</option>
               </select>
-              {errors.gender && <p className="form-error">{errors.gender}</p>}
+              {errors.gender && <p className="text-xs text-rose-600 mt-1">{errors.gender}</p>}
             </div>
 
             <div>
-              <label htmlFor="birthDate" className="form-label">
-                Date of Birth <span className="text-red-500">*</span>
+              <label htmlFor="birthDate" className="block text-xs font-semibold text-gray-700 mb-1">
+                Date of Birth <span className="text-rose-500">*</span>
               </label>
               <input
                 id="birthDate"
@@ -262,9 +289,9 @@ export default function NewPatientPage() {
                 value={form.birthDate}
                 max={new Date().toISOString().split('T')[0]}
                 onChange={(e) => update('birthDate', e.target.value)}
-                className={`form-input ${errors.birthDate ? 'border-red-400 focus:border-red-400 focus:ring-red-400' : ''}`}
+                className={`w-full border rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 ${errors.birthDate ? 'border-rose-400 focus:ring-rose-400' : 'border-gray-300 focus:ring-emerald-500'}`}
               />
-              {errors.birthDate && <p className="form-error">{errors.birthDate}</p>}
+              {errors.birthDate && <p className="text-xs text-rose-600 mt-1">{errors.birthDate}</p>}
             </div>
           </div>
         </Card>
@@ -272,31 +299,33 @@ export default function NewPatientPage() {
         {/* Section 2: Contact Information */}
         <Card>
           <h2 className="text-base font-semibold text-gray-900 mb-5 pb-3 border-b border-gray-100 flex items-center gap-2">
-            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold">2</span>
-            Contact Information
+            <span className="flex items-center justify-center w-6 h-6 rounded-lg bg-emerald-100 text-emerald-700 text-xs font-bold">
+              <FiPhone className="w-3.5 h-3.5" />
+            </span>
+            Contact Points
             <span className="ml-auto text-xs font-normal text-gray-400">Optional</span>
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="phone" className="form-label">Phone Number</label>
+              <label htmlFor="phone" className="block text-xs font-semibold text-gray-700 mb-1">Phone Number</label>
               <input
                 id="phone"
                 type="tel"
-                placeholder="+91 98765 43210"
+                placeholder="+1 (555) 234-5678"
                 value={form.phone}
                 onChange={(e) => update('phone', e.target.value)}
-                className="form-input"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
             <div>
-              <label htmlFor="email" className="form-label">Email Address</label>
+              <label htmlFor="email" className="block text-xs font-semibold text-gray-700 mb-1">Email Address</label>
               <input
                 id="email"
                 type="email"
-                placeholder="patient@example.com"
+                placeholder="robert.miller@example.com"
                 value={form.email}
                 onChange={(e) => update('email', e.target.value)}
-                className="form-input"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
           </div>
@@ -305,65 +334,67 @@ export default function NewPatientPage() {
         {/* Section 3: Address */}
         <Card>
           <h2 className="text-base font-semibold text-gray-900 mb-5 pb-3 border-b border-gray-100 flex items-center gap-2">
-            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold">3</span>
-            Address
+            <span className="flex items-center justify-center w-6 h-6 rounded-lg bg-emerald-100 text-emerald-700 text-xs font-bold">
+              <FiMapPin className="w-3.5 h-3.5" />
+            </span>
+            Residential Address
             <span className="ml-auto text-xs font-normal text-gray-400">Optional</span>
           </h2>
           <div className="space-y-4">
             <div>
-              <label htmlFor="street" className="form-label">Street Address</label>
+              <label htmlFor="street" className="block text-xs font-semibold text-gray-700 mb-1">Street Address</label>
               <input
                 id="street"
                 type="text"
-                placeholder="123 Main Street, Apt 4"
+                placeholder="100 Longwood Ave, Suite 300"
                 value={form.street}
                 onChange={(e) => update('street', e.target.value)}
-                className="form-input"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="city" className="form-label">City</label>
+                <label htmlFor="city" className="block text-xs font-semibold text-gray-700 mb-1">City</label>
                 <input
                   id="city"
                   type="text"
-                  placeholder="Chennai"
+                  placeholder="Boston"
                   value={form.city}
                   onChange={(e) => update('city', e.target.value)}
-                  className="form-input"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
               <div>
-                <label htmlFor="state" className="form-label">State</label>
+                <label htmlFor="state" className="block text-xs font-semibold text-gray-700 mb-1">State / Province</label>
                 <input
                   id="state"
                   type="text"
-                  placeholder="Tamil Nadu"
+                  placeholder="MA"
                   value={form.state}
                   onChange={(e) => update('state', e.target.value)}
-                  className="form-input"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
               <div>
-                <label htmlFor="postalCode" className="form-label">Postal Code</label>
+                <label htmlFor="postalCode" className="block text-xs font-semibold text-gray-700 mb-1">ZIP / Postal Code</label>
                 <input
                   id="postalCode"
                   type="text"
-                  placeholder="600001"
+                  placeholder="02115"
                   value={form.postalCode}
                   onChange={(e) => update('postalCode', e.target.value)}
-                  className="form-input"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
               <div>
-                <label htmlFor="country" className="form-label">Country</label>
+                <label htmlFor="country" className="block text-xs font-semibold text-gray-700 mb-1">Country</label>
                 <input
                   id="country"
                   type="text"
-                  placeholder="India"
+                  placeholder="United States"
                   value={form.country}
                   onChange={(e) => update('country', e.target.value)}
-                  className="form-input"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
             </div>
@@ -372,22 +403,26 @@ export default function NewPatientPage() {
 
         {/* Submit */}
         <div className="flex flex-col sm:flex-row gap-3 justify-end pb-4">
-          <Link href="/patients" className="btn-secondary">Cancel</Link>
+          <Link
+            href="/patients"
+            className="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-semibold text-sm transition"
+          >
+            Cancel
+          </Link>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="btn-primary min-w-[160px]"
+            className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold text-sm transition shadow-sm disabled:opacity-50 min-w-[170px]"
           >
             {isSubmitting ? (
-              <span className="flex items-center justify-center gap-2">
-                <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-                </svg>
-                Registering...
-              </span>
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                Enrolling Patient...
+              </>
             ) : (
-              'Register Patient'
+              <>
+                <FiCheckCircle className="w-4 h-4" /> Enrol Patient
+              </>
             )}
           </button>
         </div>
