@@ -23,6 +23,49 @@ from app.auth.security import get_password_hash
 async def seed_database():
     """Seed initial hospital and clinical demo records if not present."""
     async with AsyncSessionLocal() as session:
+        # 0. Core Patients (P1001 & P1002)
+        existing_p1001 = (await session.execute(select(PatientModel).where(PatientModel.id == "P1001"))).scalars().first()
+        if not existing_p1001:
+            p1 = PatientModel(
+                id="P1001",
+                family_name="Kumar",
+                given_name="Arun",
+                gender="male",
+                birth_date=date(1995, 5, 10),
+                active=True,
+                fhir_json={
+                    "resourceType": "Patient",
+                    "id": "P1001",
+                    "meta": {"versionId": "1", "lastUpdated": "2026-09-17T00:00:00Z"},
+                    "active": True,
+                    "name": [{"family": "Kumar", "given": ["Arun"]}],
+                    "gender": "male",
+                    "birthDate": "1995-05-10"
+                }
+            )
+            session.add(p1)
+
+        existing_p1002 = (await session.execute(select(PatientModel).where(PatientModel.id == "P1002"))).scalars().first()
+        if not existing_p1002:
+            p2 = PatientModel(
+                id="P1002",
+                family_name="Devi",
+                given_name="Priya",
+                gender="female",
+                birth_date=date(1988, 11, 22),
+                active=True,
+                fhir_json={
+                    "resourceType": "Patient",
+                    "id": "P1002",
+                    "meta": {"versionId": "1", "lastUpdated": "2026-09-17T00:00:00Z"},
+                    "active": True,
+                    "name": [{"family": "Devi", "given": ["Priya"]}],
+                    "gender": "female",
+                    "birthDate": "1988-11-22"
+                }
+            )
+            session.add(p2)
+
         # 1. Organization
         existing_org = (await session.execute(select(OrganizationModel).where(OrganizationModel.id == "ORG101"))).scalars().first()
         if not existing_org:

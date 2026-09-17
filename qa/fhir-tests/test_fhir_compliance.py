@@ -21,6 +21,14 @@ def _url(base_url: str, path: str) -> str:
     return base_url.rstrip("/") + "/" + path.lstrip("/")
 
 
+def _validate_fhir(model_cls, data):
+    if hasattr(model_cls, "model_validate"):
+        return model_cls.model_validate(data)
+    elif hasattr(model_cls, "parse_obj"):
+        return model_cls.parse_obj(data)
+    return model_cls(**data)
+
+
 _admin_token_cache = None
 
 
@@ -87,7 +95,7 @@ def test_patient_resource_validates_against_fhir_spec(base_url, created_patient_
     assert get_resp.status_code == 200
 
     # Validate against FHIR R4 spec — must not raise
-    patient_obj = Patient.model_validate(get_resp.json())
+    patient_obj = _validate_fhir(Patient, get_resp.json())
     assert patient_obj is not None
 
 
@@ -105,7 +113,7 @@ def test_bundle_validates_against_fhir_spec(base_url):
     )
     assert resp.status_code == 200
 
-    bundle_obj = Bundle.model_validate(resp.json())
+    bundle_obj = _validate_fhir(Bundle, resp.json())
     assert bundle_obj is not None
 
 
@@ -122,7 +130,7 @@ def test_capability_statement_validates(base_url):
     )
     assert resp.status_code == 200
 
-    cs_obj = CapabilityStatement.model_validate(resp.json())
+    cs_obj = _validate_fhir(CapabilityStatement, resp.json())
     assert cs_obj is not None
 
 
@@ -231,6 +239,6 @@ def test_operation_outcome_on_not_found(base_url):
         timeout=30,
     )
     assert resp.status_code == 404
-    oo = OperationOutcome.model_validate(resp.json())
+    oo = _validate_fhir(OperationOutcome, resp.json())
     assert oo is not None
     assert len(oo.issue) >= 1, "OperationOutcome must have at least one issue"
